@@ -1,2 +1,5 @@
 # for API keys, general config, etc.
 .env
+
+# Byte-compiled / optimized / DLL files
+src/__pycache__/
