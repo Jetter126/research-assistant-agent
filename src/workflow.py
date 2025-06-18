@@ -16,7 +16,18 @@ class Workflow:
         self.workflow = self._build_workflow()
 
     def _build_workflow(self):
-        pass
+        graph = StateGraph()
+
+        graph.add_node("extract_tools", self._extract_tools_step)
+        graph.add_node("research", self._research_step)
+        graph.add_node("analyse", self._analyse_step)
+
+        graph.set_entry_point("extract_tools")
+        graph.add_edge("extract_tools", "research")
+        graph.add_edge("research", "analyse")
+        graph.add_edge("analyse", END)
+
+        return graph.compile()
 
     def _extract_tools_step(self, state: ResearchState) -> Dict[str, Any]:
         print(f"🔍Finding articles about {state.query}")
