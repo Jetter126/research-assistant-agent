@@ -16,7 +16,7 @@ class Workflow:
         self.workflow = self._build_workflow()
 
     def _build_workflow(self):
-        graph = StateGraph()
+        graph = StateGraph(ResearchState)
 
         graph.add_node("extract_tools", self._extract_tools_step)
         graph.add_node("research", self._research_step)
@@ -144,3 +144,8 @@ class Workflow:
 
         response = self.llm.invoke(messages)
         return {"analysis": response.content}
+    
+    def run(self, query: str) -> ResearchState:
+        initial_state = ResearchState(query=query)
+        final_state = self.workflow.invoke(initial_state)
+        return ResearchState(**final_state)
