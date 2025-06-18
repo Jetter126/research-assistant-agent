@@ -10,7 +10,7 @@ from .prompts import DeveloperToolsPrompts
 
 class Workflow:
     def __init__(self):
-        self.firecrawl = FirecrawlService
+        self.firecrawl = FirecrawlService()
         self.llm = init_chat_model(os.getenv("MODEL_NAME"))
         self.prompts = DeveloperToolsPrompts()
         self.workflow = self._build_workflow()
@@ -30,7 +30,7 @@ class Workflow:
         return graph.compile()
 
     def _extract_tools_step(self, state: ResearchState) -> Dict[str, Any]:
-        print(f"🔍Finding articles about {state.query}")
+        print(f"🔍 Finding articles about {state.query}")
 
         article_query = f"{state.query} tools comparison best alternatives"
         search_results = self.firecrawl.search_companies(article_query, num_results=3)
@@ -87,7 +87,7 @@ class Workflow:
         extracted_tools = getattr(state, "extracted_tools", [])
 
         if not extracted_tools:
-            print("⚠️No extracted tools found, falling back to direct search")
+            print("⚠️ No extracted tools found, falling back to direct search")
             search_results = self.firecrawl.search_companies(state.query, num_results=4)
             tool_names = [
                 result.get("metadata", {}).get("title", "Unknown")
@@ -96,14 +96,14 @@ class Workflow:
         else:
             tool_names = extracted_tools[:4]
 
-        print(f"🔬Researching specific tools: {', '.join(tool_names)}")
+        print(f"🔬 Researching specific tools: {', '.join(tool_names)}")
 
         companies = []
         for tool_name in tool_names:
             tool_search_results = self.firecrawl.search_companies(tool_name + " official site", num_results=1)
 
             if tool_search_results:
-                result = tool_search_results[0]
+                result = tool_search_results.data[0]
                 url = result.get("url", "")
                 
                 company = CompanyInfo(

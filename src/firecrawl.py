@@ -29,9 +29,9 @@ class FirecrawlService():
         try:
             result = self.app.scrape_url(
                 url,
-                format=["markdown"]
+                formats=["markdown"]
             )
             return result
         except Exception as e:
             print(e)
-            return []
+            return None
